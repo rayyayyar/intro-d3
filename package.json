@@ -1,0 +1,15 @@
+{
+  "name": "intro-d3",
+  "version": "1.0.0",
+  "description": "Intro experiments with d3",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "d3",
+    "intro"
+  ],
+  "author": "Ray Luong",
+  "license": "ISC"
+}
