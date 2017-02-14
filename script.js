@@ -30,43 +30,53 @@ function ready(error, coordinatesJSON, ridersJSON) {
 }
 
 function draw() {
+	console.log("draw");
 	var line = 	d3.line()
 								.x(function(d, i) { console.log("i:" + i); return d.x;  })
 								.y(function(d, i) { return d.y; });
 
-	var path = svg.data(coordinates)
-		// .enter()
+	var circles = d3.select("svg").selectAll("circle")
+		.data(coordinates)
+		.enter()
+		.append("circle")
+		.attr("cx", function(d, i) {
+			return d.x;
+		})
+		.attr("cy", function(d) {
+			return d.y;
+		})
+		.attr("r", 2)
+	  .attr("fill", "steelblue");
+
+var paths = d3.select("svg").selectAll("path")
+		.data(coordinates)
+		.enter()
 		.append("path")
-	  .attr("d", function(d, i) { return line([
-      {
-        "station": "RICH", 
-        "x": 333, 
-        "y": 120 
-      },
-      {
-        "station": "DELN", 
-        "x": 344, 
-        "y": 142 
-      },
-      ]); }) // move to [0], lineto [1]
-	  .attr("stroke", "steelblue")
-	  .attr("stroke-width", function(d) { return 2; })
-	  .attr("fill", "none");
-/*
-select svg
-bind data (two objects) from data array
-enter remaining data
-append path
+		.attr("fill", "none")
+		.attr("stroke", "steelblue")
+		.attr("stroke-width", function(d, i) { return Math.random() * i });
 
-*/
+	
+	paths.attr("d", function(d, i) { if (i <=  paths.data().length - 2) { return line(segmentData(i)); } })
 
-	// var totalLength = path.node().getTotalLength();
+	function segmentData(i) {
+		
+			var pair = [{"x": paths.data()[i].x, "y": paths.data()[i].y}, {"x": paths.data()[i+1].x, "y": paths.data()[i+1].y}];
+			return pair;
+		
+	}
 
-	// path
+	// attempt animation
+	// var totalLength = paths.node().getTotalLength();
+
+	// paths
 	//   .attr("stroke-dasharray", totalLength + " " + totalLength)
 	//   .attr("stroke-dashoffset", totalLength)
 	//   .transition()
-	//     .duration(40000)
+	//     .duration(1000)
 	//     .ease(d3.easeLinear)
 	//     .attr("stroke-dashoffset", 0);
+
+
 }
+
