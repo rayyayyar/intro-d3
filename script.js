@@ -79,29 +79,4 @@ function draw() {
     totalTime += time;
 
   }
-  
-
-  
-  // paths.attr("d", function(d, i) { if (i <=  paths.data().length - 2) { return line(segmentData(i)); } })
-
-  // function segmentData(i) {
-    
-  //     var pair = [{"x": paths.data()[i].x, "y": paths.data()[i].y}, {"x": paths.data()[i+1].x, "y": paths.data()[i+1].y}];
-  //     return pair;
-    
-  // }
-
-  // attempt animation
-  // var totalLength = paths.node().getTotalLength();
-
-  // paths
-  //   .attr("stroke-dasharray", totalLength + " " + totalLength)
-  //   .attr("stroke-dashoffset", totalLength)
-  //   .transition()
-  //     .duration(1000)
-  //     .ease(d3.easeLinear)
-  //     .attr("stroke-dashoffset", 0);
-
-
 }
-
