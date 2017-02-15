@@ -1,14 +1,12 @@
 console.log("Starting a d3 experiment");
 
 d3.select("body").style("background-color", "white");
-var w = 1000,
-    h = 1000;
 
 //append svg to div#line
 var svg = d3.select("#line")
   .append("svg")
-  .attr("width", w)
-  .attr("height", h)
+  .attr("width", 1000)
+  .attr("height", 1000)
   .attr("id", "visualization")
   .attr("xmlns", "http://www.w3.org/2000/svg");
 
@@ -26,7 +24,76 @@ function ready(error, coordinatesJSON, ridersJSON) {
   coordinates = coordinatesJSON;
   riders = ridersJSON;
   console.log("coordinates: " + JSON.stringify(coordinates));
+  massage();
   draw();
+}
+
+function massage() {
+  var h = 0;
+  // filter ridership data to only trips on a specific line (red, blue, green, etc)
+  var redLineRiders = riders.filter(isOnRed);
+  // filter ridership data to direction NB or SB
+  var redLineRidersSouthBound = redLineRiders.filter(isSouthBound);
+  var trips = redLineRidersSouthBound.filter(tripsHour(h));
+
+
+  function matchTrip(origin, dest, t) {
+    return t.origin == origin && t.dest == dest;
+  }
+
+  function isSouthBound(t) {
+    // assumes coordinate data is always listed north to south
+    return getStationIndex(coordinates, t.origin) < getStationIndex(coordinates, t.dest);
+  }
+
+  function getStationIndex(line, station) {
+    var i = line.map(function(e) {
+      return e.station;
+    }).indexOf(station);
+    return i;
+  }
+
+  function isOnRed(t) {
+    // is trip object t's origin  == to any of coordinates's stations?
+    for (var i = 0; i < coordinates.length; i++) {
+      if (t.origin == coordinates[i].station) {
+        for (var i = 0; i < coordinates.length; i++) {
+          if (t.dest == coordinates[i].station) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  // sum all riders that board at an origin station that's on a specific line
+  function sumBoard (line, origin) {
+    var ridersCount = line.reduce(function(sum, x) {
+      if (x.origin == origin) {
+        return sum + x.riders;
+      }
+      return sum;
+    }, 1);
+    return ridersCount;
+  }
+
+  // for a set of trips, sum all riders that exit at a specified dest station
+  function sumExits (trips, dest) {
+    var ridersCount = trips.reduce(function(sum, x) {
+      if (x.dest == dest) {
+        return sum + x.riders;
+      }
+      return sum;
+    }, 1);
+    return ridersCount;
+  }
+
+  //filter function to return only trips of a requested hour
+  function tripsHour(hour) {
+    return function(t) {
+      return t.hour == hour;
+    }
+  }
 }
 
 function draw() {
